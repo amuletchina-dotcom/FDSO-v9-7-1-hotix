@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0f172a">
+<title>ASTM E1300 + DPT Wind Calculator V9.7</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="loginOverlay" class="loginOverlay">
+  <div class="loginCard">
+    <div class="brand">CS ECO GLASS</div>
+    <h1>Glass Wind Design</h1>
+    <p>Select employee to enter the calculator.</p>
+    <label>Employee
+      <select id="employeeLogin">
+        <option value="">Select employee</option>
+        <option>Benz</option>
+        <option>Mook</option>
+        <option>Dear</option>
+        <option>Nee</option>
+        <option>BB</option>
+      </select>
+    </label>
+    <button id="loginBtn" class="primary loginBtn">Login</button>
+    <div class="loginNote">Static GitHub version · staff identification only</div>
+  </div>
+</div>
+<main class="wrap">
+  <section class="card hero">
+    <div class="brand">CS ECO GLASS</div>
+    <h1>ASTM E1300 + DPT Wind Calculator V9.7</h1>
+    <p>Thailand DPT wind-load pre-check + ASTM E1300 NFL / GTF / LSF / Deflection with evidence.</p>
+    <div class="staffBar"><span>Logged in: <b id="staffName">—</b></span><button id="logoutBtn" class="secondary miniBtn">Change employee</button></div>
+  </section>
+
+
+
+  <section class="card">
+    <h2>Report Information</h2>
+    <div class="grid3">
+      <label>Project Name
+        <input id="projectName" type="text" placeholder="Project name">
+      </label>
+      <label>Client
+        <input id="clientName" type="text" placeholder="Client / consultant">
+      </label>
+      <label>Reference / Drawing No.
+        <input id="reportRef" type="text" placeholder="Optional reference">
+      </label>
+      <label>Panel Code
+        <input id="panelCode" type="text" placeholder="Panel code">
+      </label>
+      <label>Floor
+        <input id="floor" type="text" placeholder="Floor / Level">
+      </label>
+      <label>Coating Layer(s)
+        <select id="coatingLayers">
+          <option value="0" selected>None</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+        </select>
+      </label>
+
+      <label>Coating 1 Code
+        <input id="coating1Code" type="text" placeholder="e.g. RTS01">
+      </label>
+      <label>Coating 1 Surface
+        <select id="coating1Surface">
+          <option value="2" selected>#2</option>
+          <option value="3">#3</option>
+          <option value="4">#4</option>
+          <option value="5">#5</option>
+          <option value="6">#6</option>
+        </select>
+      </label>
+
+      <label id="coating2CodeBox" class="hidden">Coating 2 Code
+        <input id="coating2Code" type="text" placeholder="e.g. RTM2M2">
+      </label>
+      <label id="coating2SurfaceBox" class="hidden">Coating 2 Surface
+        <select id="coating2Surface">
+          <option value="2">#2</option>
+          <option value="3">#3</option>
+          <option value="4" selected>#4</option>
+          <option value="5">#5</option>
+          <option value="6">#6</option>
+        </select>
+      </label>
+    </div>
+  </section>
+
+  <section class="card dptCard">
+    <div class="sectionBadge">THAILAND DPT · มยผ.1311-50</div>
+    <h2>DPT Design Wind Pressure</h2>
+    <p class="muted">Select installation location and height. The calculator digitizes DPT Appendix A wind groups and the Chapter 2 simple-method factors. Final design pressure can be manually overridden.</p>
+
+    <div class="grid3">
+      <label>Province / จังหวัด
+        <select id="dptProvince"></select>
+      </label>
+
+      <label id="dptDistrictBox" class="hidden">District / Area
+        <select id="dptDistrict"></select>
+      </label>
+
+      <label>Installation height z (m)
+        <input id="dptHeight" type="number" value="20" min="0.1" step="0.1">
+      </label>
+
+      <label>Terrain / Exposure
+        <select id="dptTerrain">
+          <option value="A">A — Open / coast</option>
+          <option value="B">B — Suburban / dense trees / small city</option>
+        </select>
+      </label>
+
+      <label>Limit state
+        <select id="dptLimit">
+          <option value="strength">Strength design</option>
+          <option value="service">Serviceability</option>
+        </select>
+      </label>
+
+      <label>Building importance
+        <select id="dptImportance">
+          <option value="normal">Normal / ปกติ</option>
+          <option value="low">Low / น้อย</option>
+          <option value="high">High / มาก</option>
+          <option value="veryhigh">Very High / สูงมาก</option>
+        </select>
+      </label>
+
+      <label class="checkLabel">Typhoon factor
+        <span><input id="dptUseTF" type="checkbox" checked> Use TF for strength design</span>
+      </label>
+
+      <label>Facade Cp preset
+        <select id="dptFacade">
+          <option value="windward">Windward wall · Cp +0.80</option>
+          <option value="leeward">Leeward wall · Cp −0.50</option>
+          <option value="custom">Custom Cp</option>
+        </select>
+      </label>
+
+      <label id="dptCustomCpBox" class="hidden">Custom Cp
+        <input id="dptCustomCp" type="number" value="0.80" step="0.05">
+      </label>
+
+      <label>Internal opening condition
+        <select id="dptOpening">
+          <option value="2">Case 2 — normal building</option>
+          <option value="1">Case 1 — very tight building</option>
+          <option value="3">Case 3 — large openings</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="actions dptActions">
+      <button id="dptCalc" class="primary">Calculate DPT Wind</button>
+    </div>
+
+    <div class="dptSummary">
+      <div class="dptKpi">
+        <span>Suggested Design Wind Pressure</span>
+        <strong id="dptSuggested">—</strong>
+      </div>
+      <div class="dptUsed">
+        <label>Design Wind Pressure Used (kPa)<br><small class="muted">Used by ASTM deflection calculation</small>
+          <input id="dptUsedPressure" type="number" value="" min="0" step="0.01">
+        </label>
+        <button id="dptUseSuggested" class="secondary">Use Suggested</button>
+        <div id="dptOverrideStatus" class="overrideStatus">AUTO — DPT suggested</div>
+      </div>
+    </div>
+
+    <div class="dptQuick">
+      <div><span>Group</span><b id="dptGroup">—</b></div>
+      <div><span>V50</span><b id="dptV50">—</b></div>
+      <div><span>TF</span><b id="dptTF">—</b></div>
+      <div><span>V used</span><b id="dptVref">—</b></div>
+      <div><span>q</span><b id="dptQ">—</b></div>
+      <div><span>Ce</span><b id="dptCe">—</b></div>
+      <div><span>Iw</span><b id="dptIw">—</b></div>
+    </div>
+
+    <details class="dptDetails">
+      <summary>DPT calculation evidence</summary>
+      <div id="dptEvidence"></div>
+    </details>
+  </section>
+
+  <section class="card">
+    <h2>Panel</h2>
+    <div class="grid3">
+      <label>Assembly
+        <select id="assembly">
+          <option value="igu">Double glazing IGU</option>
+          <option value="single">Single lite / Inner only</option>
+          <option value="laminatedOnly">Laminated Only</option>
+        </select>
+      </label>
+      <label id="airgapBox">Air Gap
+        <select id="airgap">
+          <option value="6">6 mm</option>
+          <option value="9">9 mm</option>
+          <option value="12" selected>12 mm</option>
+          <option value="16">16 mm</option>
+          <option value="20">20 mm</option>
+          <option value="24">24 mm</option>
+        </select>
+      </label>
+      <label>Width (mm)<input id="width" type="number" value="2000" min="1"></label>
+      <label>Height (mm)<input id="height" type="number" value="2800" min="1"></label>
+      <label>Load duration
+        <select id="duration">
+          <option value="short">Short duration ≤ 3 s</option>
+          <option value="long">Long duration ≈ 30 days</option>
+        </select>
+      </label>
+      <label>Deflection criterion
+        <select id="deflectionCriterion">
+          <option value="thai90" selected>Thailand Typical — L/90 & max 20 mm</option>
+          <option value="l60">L/60</option>
+          <option value="l100">L/100</option>
+          <option value="review">ASTM E1300 — Review only</option>
+          <option value="custom">Custom limit (mm)</option>
+        </select>
+      </label>
+      <label id="customDeflectionBox" class="hidden">Custom deflection limit (mm)
+        <input id="customDeflectionLimit" type="number" value="20" min="0.1" step="0.1">
+      </label>
+      <label>Support
+        <select id="support">
+          <option value="4">4 sides continuously supported</option>
+          <option value="3">3 sides continuously supported</option>
+          <option value="2">2 opposite sides supported</option>
+          <option value="1">1 side / cantilever</option>
+        </select>
+      </label>
+      <label id="threeEdgeBox" class="hidden">3-side free / unsupported edge
+        <select id="threeFreeEdge">
+          <option value="top">Top edge free</option>
+          <option value="bottom">Bottom edge free</option>
+          <option value="left">Left edge free</option>
+          <option value="right">Right edge free</option>
+        </select>
+      </label>
+      <label id="edgeBox" class="hidden">2-side supported edges
+        <select id="supportedEdges">
+          <option value="lr">Left / Right supported</option>
+          <option value="tb">Top / Bottom supported</option>
+        </select>
+        <div id="twoSideSpanInfo" class="derived"></div>
+      </label>
+      <label id="oneEdgeBox" class="hidden">1-side supported edge
+        <select id="oneSupportedEdge">
+          <option value="left">Left edge supported</option>
+          <option value="right">Right edge supported</option>
+          <option value="top">Top edge supported</option>
+          <option value="bottom">Bottom edge supported</option>
+        </select>
+      </label>
+    </div>
+  </section>
+
+  <section class="lites">
+    <div id="outerCard" class="card">
+      <h2>Outer Lite</h2>
+      <div id="outerFields"></div>
+    </div>
+    <div class="card">
+      <h2>Inner Lite</h2>
+      <div id="innerFields"></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="actions">
+      <button id="example1" class="secondary">ASTM A3.1: 6 mm / 1200×1500</button>
+      <button id="example2" class="secondary">Report: 6 mm / 2000×2800</button>
+      <button id="calc" class="primary">Calculate ASTM</button>
+    </div>
+  </section>
+
+
+  <section id="batchFinder" class="card">
+    <h2>Finding Minimum Passing Glass — Batch</h2>
+    <p class="muted">Use the same project/building settings above. Upload FDSO-BUL-v2 with Panel ID, size and installation height only. The software recalculates DPT design wind pressure for every row, then finds the minimum passing glass structure.</p>
+    <div class="grid3">
+      <label id="batchIguStructureBox" class="hidden">IGU batch structure
+        <select id="batchIguStructure">
+          <option value="mono-mono">Monolithic Outer + Air + Monolithic Inner</option>
+          <option value="lam-mono">Laminated Outer + Air + Monolithic Inner</option>
+          <option value="mono-lam">Monolithic Outer + Air + Laminated Inner</option>
+        </select>
+      </label>
+      <label>Upload FDSO-BUL-v2.xlsx
+        <input id="batchFile" type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+      </label>
+    </div>
+    <div class="actions batchActions">
+      <button id="batchDownloadTemplate" class="secondary">Download FDSO-BUL-v2 Template</button>
+      <button id="batchRun" class="primary" disabled>Find Minimum Passing Glass</button>
+      <button id="batchExport" class="secondary" disabled>Export FDSO-BRT-v2 Results</button>
+    </div>
+    <div id="batchStatus" class="notice">No batch file loaded.</div>
+    <div id="batchPreview"></div>
+    <div class="dptCaveat">
+      <b>Batch logic:</b> project wind settings are common; each row uses its own Installation Height to calculate DPT wind pressure. Monolithic returns separate minimum AN and FT options. Laminated searches AN+AN, then HS+HS, then FT+FT; laminated ply thickness difference must be ≤2 mm. IGU uses only the selected batch structure and starts from AN components.
+    </div>
+  </section>
+
+  <section id="results" class="card hidden">
+    <div id="finalResult"></div>
+    <div class="reportActions">
+      <button id="generateReport" class="primary">Generate Full Report</button>
+      <span class="muted">Includes DPT wind calculation, ASTM strength/deflection results and charts.</span>
+    </div>
+    <h2>ASTM Results</h2>
+    <div id="resultCards" class="resultCards"></div>
+  </section>
+
+  <section id="viewer" class="card hidden">
+    <div class="viewerHead">
+      <div>
+        <h2>ASTM Evidence</h2>
+        <div id="chartSubtitle" class="muted"></div>
+      </div>
+      <div class="toggle">
+        <button id="showOuter" class="secondary">Outer</button>
+        <button id="showInner" class="secondary">Inner</button>
+      </div>
+    </div>
+
+    <div class="evidenceTabs">
+      <button id="evNFL" class="secondary evidenceActive">NFL Figure</button>
+      <button id="evGTF" class="secondary">GTF Table</button>
+      <button id="evLSF" class="secondary">LSF Table</button>
+      <button id="evDEF" class="secondary">Deflection</button>
+    </div>
+
+    <div id="nflEvidence">
+      <div class="chartWrap">
+        <img id="chartImg" alt="ASTM E1300 NFL chart">
+        <canvas id="overlay"></canvas>
+      </div>
+
+      <div class="legend">
+        <span><i class="dot point"></i> Panel size / intersection</span>
+        <span><i class="dot ar"></i> Dimension / AR guide</span>
+        <span><i class="dot contour"></i> Highlighted ASTM line</span>
+      </div>
+    </div>
+
+    <div id="tableEvidence" class="hidden"></div>
+
+    <div id="chartNote" class="notice"></div>
+
+    <!-- original closing structure continued -->
+    <div class="hidden">
+    </div>
+    </div>
+  </section>
+
+  <section class="card small">
+    V9.7.1 keeps the V9.6.1 ASTM/DPT calculation engine and adds the Finding Minimum Passing Glass batch workflow. Batch wind pressure is calculated row-by-row from each panel installation height using the common DPT project settings.
+    ASTM strength uses the applicable NFL/GTF/LSF logic and the selected numerical deflection criterion. For Double IGU, the current ASTM basic-procedure finder is limited to four-side continuous support.
+  </section>
+</main>
+
+<script src="astm-data.js"></script>
+<script src="nfl-chart-data.js"></script>
+<script src="nfl-engine.js"></script>
+<script src="astm-factors.js"></script>
+<script src="dpt-engine.js"></script>
+<script src="deflection-engine.js"></script>
+<script src="stress-engine.js"></script>
+<script src="report-engine.js"></script>
+<script src="app.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="batch-engine.js"></script>
+</body>
+</html>
